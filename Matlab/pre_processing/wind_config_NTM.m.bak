@@ -31,8 +31,8 @@ dlc_cell{row,idx} = turbclass;
 dlc_cell{row,idx}='NTM' ; 
 
 % search for UsableTime (sim-time TurbSim-Inputfile)
-%[idx,dlc_cell] = find_label_or_create(dlc_cell,'UsableTime',false) ;
-%dlc_cell{row,idx}=duration; 
+[idx,dlc_cell] = find_label_or_create(dlc_cell,'UsableTime',false) ;
+dlc_cell{row,idx}=duration; 
 
 % search for AnalysisTime (sim-time TurbSim-Inputfile)
 [idx,dlc_cell] = find_label_or_create(dlc_cell,'AnalysisTime',false) ;

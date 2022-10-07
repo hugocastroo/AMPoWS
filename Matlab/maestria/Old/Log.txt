@@ -1,0 +1,57 @@
+26.08.2022
+
+-David Meeting WETI, ROSCO Regler wurde diskutiert und Feng hat den ROSCO Controller grob erklärt
+-Mit David abgemacht, er versucht DLLS zu kompillieren, ich soll in den ROSCO Controller reinkommen
+-Masterarbeit soll erst im Oktober angemeldet werden
+-
+
+29.08.2022
+-Check the ROSCO controller overview in GITHUB
+-Compared the differences of the torque response between the FS2B and DISCON controller.
+-Created Virtual environment in conda for the rosco controller and ownload everything again
+-Tried creating the virtual environment for the toolbox and the controller but was not possible, during the day, I will try again from the beginning
+-Managed to compille the ROSCO-DLL using the gfortran and cmakelist
+-Toolbox not working
+
+30.08.2022
+-Managed to install the toolbox correctly, it was needed to install the wisdem package in a new environment, it was needed to install the package by itself (using the github source) and then do the installation for the toolbox. After that the tooldbox was working and the examples were working
+
+31.08.2022
+-Short talk with David about the compilation and about the controllers
+-Changed the source code in ServoDyn - Line 395(   m%dll_data%GenTrq_prev = p%InitGenTrq), after this change the generator torque init from the servo dyn DAT file was beeing taken into account in the controller
+-Tested different vlaues, the controller is working fine!
+-It still needed to make the changes in the rosco controller so that it works with the value from the controller in case that they are bigger than 0, or if they are -XXX, then it should start with the automatic value from the controller
+
+01.09.2022
+-Informed Jens that I still have problems with the Ampows, he made a new version but still is not working
+-Try to make the changes in the ROSCO Controller
+-Found where the PI in the ROSCO Controller is initialized
+
+02.09.2022
+-Showed the changes to David
+-Discussed with David about the tesis topic, registration date and the best working plan
+	-I should be writing notes for better understanding of what I am doing
+	-Write while working also text about it, so that I dont forget what I did and that way it is easier to recognize possible errors when everything is beeing documented
+	-Made a sketch of the content, to discuss it and now where to start
+	-Make comments in the latex environment to know about what it is every chapter, section in paragraph, thatshould make it easier for finding topics or information once it is written
+	-Work with latex and github to keep track of the deleted information
+	-Fork the Openfast repository and work privately with it, to keep track of the changes
+	-
+03.09.2022
+-Started with github basic commands, made a first repository and tried the basic commands
+-Forked the openfast repository
+-
+
+04.09.2022
+-Payed the overleaf student account to be able to sync with github and be able to work on the cloud
+-Installed matlab 2022
+-Cloned and downloaded the newest openfast to implement the changes initgentrq, and implemented them succesfully
+
+05.09.2022
+-Made the torque initialisation documentation in overleaf
+	
+
+
+
+
+

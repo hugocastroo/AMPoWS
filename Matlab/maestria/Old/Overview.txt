@@ -1,0 +1,209 @@
+Adaptive Betriebstrategien für bestehende Wind Energie Anlagen
+	-Weiterentwicklung, Test und Integration Lidar-Basierter Betriebstrategien
+	
+*Adaptive Strategien werden entwickelt und auf aktuelle und zukünftige Herausforderungen angepasst, um den Betrieb der bestehenden WEA zu gewährleisten.
+	-Betriebsführungskonzepte, welche im Zeitbereich von Minuten agieren
+	-Regelungsstrategien, welche im Zeitbereich von Sekunden reagieren
+	
+Folgende faktoren werden vom System berücksichtigt:
+	-Energiepreis
+	-Lidar Windvorhersage
+	-Lastmonitoring
+	
+Wie kann die Windvorhersage mit den neuesten Simulationsmethoden und Lidar-Messungen verbessert werden?
+Wie können Modelle für das Lastmonitoring auf Anlagen des gleichen Typs übertragen werden?
+Wie können Lidar-Messungen bei der Lastverifikation unterstützen?
+
+Vorteile:
++Lebenszeitverlängerung
++Ertrag erhöhung
++Schallemissionen reduzieren
++Stützung des elektrischen Netzes
+
+Retrofit möglich?
+Inwiefern kann eine optimale, mit Lidar-Messungen, Windvorhersage helfen, bzw Ertrag erhöhen, Lebenszeit steigern, Schallemissionen reduzieren und das elektrisches Netz stützen?
+Wie Kann der Energiepreis und das Lastmonitoring helfen, um Bestandsanlagen möglich lang und wirtschaftlich zu betreiben?
+Können die moderne Regelungsstrategien aud Bestandsanlagen übertragen werden?
+
+
+
+Inhalte:
+	+Aufbau eine Simulationsumgebung für die MM92 mit den kompletten technischen Parametern
+		-Simulation mit verschiedenen faktoren:
+			+Lebenszeitverlängerung
+			+Ertrag erhöhen
+			+Kopplung mit Energiespeicher und Wasserstoff
+	+Regelstrategien
+		-Datenbasierte Modelierung
+		-Mit adaptiver Regelung anhand der Daten
+		-Bereitstellung und Integration der Lidar-Messungen
+		-Lidar Vorsteuerung
+		
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Struktur der Arbeit:
+
+1.- Zusammenfassung
+2.- Verzeichnis
+3.- Einleitung
+4.- Stand der Technik was WKA angeht
+5.- MM92 Turbine 
+	Technische Daten
+6.- Molas lidar
+	Technische Daten
+7.- Openfast
+8.- Zusammensetzung der Simulation 
+	-Parameter - Eigenschaften der MM92 Turbine
+	-Bedingungen für die Simulation in OpenFast
+9.- Ergebnisse der Simulation
+10.- Auswertung der Simulation
+11.- Schluss
+	Zusammenfassung
+	Bewertung des Zieles/Ergebniss
+	Ausblick (future work)
+12.- Anhang
+13.- Literaturverzeichnis
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+How to Generate a Thesis Statement if the Topic is Assigned
+Almost all assignments, no matter how complicated, can be reduced to a single question. Your first step, then, is to distill the assignment into a specific question. For example, if your assignment is, “Write a report to the local school board explaining the potential benefits of using computers in a fourth-grade class,” turn the request into a question like, “What are the potential benefits of using computers in a fourth-grade class?” After you’ve chosen the question your essay will answer, compose one or two complete sentences answering that question.
+
+Q: “What are the potential benefits of using computers in a fourth-grade class?”
+
+A: “The potential benefits of using computers in a fourth-grade class are . . .”
+
+OR
+
+A: “Using computers in a fourth-grade class promises to improve . . .”
+
+The answer to the question is the thesis statement for the essay.
+
+How to Tell a Strong Thesis Statement from a Weak One
+1. A strong thesis statement takes some sort of stand.
+Remember that your thesis needs to show your conclusions about a subject. For example, if you are writing a paper for a class on fitness, you might be asked to choose a popular weight-loss product to evaluate. Here are two thesis statements:
+
+There are some negative and positive aspects to the Banana Herb Tea Supplement.
+
+This is a weak thesis statement. First, it fails to take a stand. Second, the phrase negative and positive aspects is vague.
+
+Because Banana Herb Tea Supplement promotes rapid weight loss that results in the loss of muscle and lean body mass, it poses a potential danger to customers.
+
+This is a strong thesis because it takes a stand, and because it's specific.
+
+2. A strong thesis statement justifies discussion.
+Your thesis should indicate the point of the discussion. If your assignment is to write a paper on kinship systems, using your own family as an example, you might come up with either of these two thesis statements:
+
+My family is an extended family.
+
+This is a weak thesis because it merely states an observation. Your reader won’t be able to tell the point of the statement, and will probably stop reading.
+
+While most American families would view consanguineal marriage as a threat to the nuclear family structure, many Iranian families, like my own, believe that these marriages help reinforce kinship ties in an extended family.
+
+This is a strong thesis because it shows how your experience contradicts a widely-accepted view. A good strategy for creating a strong thesis is to show that the topic is controversial. Readers will be interested in reading the rest of the essay to see how you support your point.
+
+3. A strong thesis statement expresses one main idea.
+Readers need to be able to see that your paper has one main point. If your thesis statement expresses more than one idea, then you might confuse your readers about the subject of your paper. For example:
+
+Companies need to exploit the marketing potential of the Internet, and Web pages can provide both advertising and customer support.
+
+This is a weak thesis statement because the reader can’t decide whether the paper is about marketing on the Internet or Web pages. To revise the thesis, the relationship between the two ideas needs to become more clear. One way to revise the thesis would be to write:
+
+Because the Internet is filled with tremendous marketing potential, companies should exploit this potential by using Web pages that offer both advertising and customer support.
+
+This is a strong thesis because it shows that the two ideas are related. Hint: a great many clear and engaging thesis statements contain words like because, since, so, although, unless, and however.
+
+4. A strong thesis statement is specific.
+A thesis statement should show exactly what your paper will be about, and will help you keep your paper to a manageable topic. For example, if you're writing a seven-to-ten page paper on hunger, you might say:
+
+World hunger has many causes and effects.
+
+This is a weak thesis statement for two major reasons. First, world hunger can’t be discussed thoroughly in seven to ten pages. Second, many causes and effects is vague. You should be able to identify specific causes and effects. A revised thesis might look like this:
+
+Hunger persists in Glandelinia because jobs are scarce and farming in the infertile soil is rarely profitable.
+
+Where Does the Thesis Statement Go?
+A good practice is to put the thesis statement at the end of your introduction so you can use it to lead into the body of your paper. This allows you, as the writer, to lead up to the thesis statement instead of diving directly into the topic. If you place the thesis statement at the beginning, your reader may forget or be confused about the main idea by the time he/she reaches the end of the introduction. Remember, a good introduction conceptualizes and anticipates the thesis statement.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+An effective thesis cannot be answered with a simple "yes" or "no." A thesis is not a topic; nor is it a fact; nor is it an opinion. "Reasons for the fall of communism" is a topic. "Communism collapsed in Eastern Europe" is a fact known by educated people. "The fall of communism is the best thing that ever happened in Europe" is an opinion. (Superlatives like "the best" almost always lead to trouble. It's impossible to weigh every "thing" that ever happened in Europe. And what about the fall of Hitler? Couldn't that be "the best thing"?)
+
+A good thesis has two parts. It should tell what you plan to argue, and it should "telegraph" how you plan to argue—that is, what particular support for your claim is going where in your essay.
+
+(https://writingcenter.fas.harvard.edu/pages/developing-thesis)
+
+But if the audience knows more than the writer, as is the case with students, the purpose will be demonstration of knowledge and expertise. So you should be aware of the purpose of your writing as it is a decisive factor.
+
+(https://www.linkedin.com/pulse/20140921054204-275561203-6-general-points-to-consider-in-academic-writing)
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Struktur der Arbeit:
+
+Abstract
+Table of contents
+	List of figures
+	List of formels
+	List of tables
+	Nomenclature abbrev.
+Introduction to the work
+	-Introduction to the state of the art WEA
+	-MM92 Turbine Overview-description
+	-Technical data
+	-Lidar state of the art
+	-Molas Lidar
+	-Technical data
+	-Openfast state of the art
+Overview-Introduction of the simulation
+	-Parameter - Eigenschaften der MM92 Turbine
+	-Bedingungen für die Simulation in OpenFast
+9.- Ergebnisse der Simulation
+10.- Auswertung der Simulation
+11.- Schluss
+	Zusammenfassung
+	Bewertung des Zieles/Ergebniss
+	Ausblick (future work)
+13.- Literaturverzeichnis
+12.- Anhang
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+OpenFast installation and testing
+	-Managed to compile OpenFAST
+	-Looked in the source code of OpenFAST, to understand/have an overview of how it works
+	-Managed to find where the "pitch actuator" was implemented in the old version, this is not used
+	-Find out the continuos stated in elastodyn and servodyn that David wanted
+	-ASK FENG ABOUT HIS IMPLEMENTATION OF THE LIDAR MODULE
+		-SEE IF HE USED CONTINUES STATED FOR INTEGRATING, WHAT DID HE DO EXACTLY IN THE CODE
+	-Check the variables used in the Bladed interface, read the bladed interface usw.... 
+	-
+
+Pitchactuator implementation in OpenFast
+	-First and second Order model
+		-Checked theory about it, read papers about the possible variations, it should be kept simply according to david
+	-Check the openfast code and found it informtion about it, this is never used
+	
+Power train loses implementation in OpenFast
+	-Check theory and models
+
+
+Enough Theory to be able to writhe about Non-Linear MPC
+	-See the boot camp videos again
+	-David lecture videos
+	-Slide from kybernetics
+	
+	
+	
+	Gearbox efficienci factor
+	Joints material attachment tzpes with different effiencies?
+	Type of oil?
+	Sommer-Winter?
+	Components efficiency
+	According to the type of generator and or gearbox, all this values change
+	
+	comprising a 3.25 megawatt (MW) permanent magnet synchronous generator and a full power converter.
+	
+	The full scale and full power performance tests included temperature rise test, du/dt (voltage rise), peak voltage, harmonics and measurement of the electrical drivetrain’s efficiency throughout the intended wind turbine operational speed range.
+	
+	The electrical drivetrain package on test consisted of a permanent magnet synchronous generator incorporating a patented structural design for the rotor and dual winding coil groups at the stator, and an ACS880 full power converter. The ACS880 is equipped with parallel-connected sub-converters, which can be activated or deactivated depending on the wind conditions. This increases the converter’s overall efficiency, especially at partial load (low wind conditions).
+	
+	Drivetrain: gearbox and generator, main bearing, cou
+	
+	
