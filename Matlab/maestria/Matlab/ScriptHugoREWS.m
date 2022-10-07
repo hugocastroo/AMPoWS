@@ -109,3 +109,52 @@ title("EWS - FREWS ");
 legend('Estimated wind speed','Filtered Rotor Effective Wind Speed');
 
 xlim([0 600]);
+
+%%
+%% Windsignal PSD Example PSD - Not sure if it is correct or not
+% resultData      = importdata('1p2_maininput.RO.dbg2');
+% signalNames     = resultData.textdata(2,:);
+% Time            = resultData.data(:,matches(signalNames,'Time'));
+% WE_Vw           = resultData.data(:,matches(signalNames,'WE_Vw'));               %! Estimated wind speed [m/s]
+% 
+% %%
+% WE_Vw = WE_Vw(2400:end);
+% figure
+% ax1 = subplot(2,1,1);
+% hold on; grid on; box on
+% plot(Time(2400:end,1),  WE_Vw,  '-','DisplayName','Estimated wind speed');
+% xlabel("Time in s");
+% ylabel("Velocity in m/s");
+% title("Estimated wind speed");
+% lgd = legend;
+% 
+% %%
+% Fs = 160;            % Sampling frequency                    
+% T = 1/Fs;             % Sampling period       
+% L = 93602;             % Length of signal
+% t = (0:L-1)*T;        % Time vector
+% ax1 = subplot(2,1,2);
+% plot(1000*t(1:50),WE_Vw(1:50))
+% title("Signal Corrupted with Zero-Mean Random Noise")
+% xlabel("t (milliseconds)")
+% ylabel("X(t)")
+% 
+% %%
+% figure
+% Y = fft(WE_Vw);
+% P2 = abs(Y/L);
+% P1 = P2(1:L/2+1);
+% P1(2:end-1) = 2*P1(2:end-1);
+% 
+% f = Fs*(0:(L/2))/L;
+% plot(f,P1) 
+% title("Single-Sided Amplitude Spectrum of X(t)")
+% xlabel("f (Hz)")
+% ylabel("|P1(f)|")
+% % ax2 = subplot(2,1,2);
+% % hold on; grid on; box on
+% % plot(freq,pow2db(psdy),  '-','DisplayName','Power Spectral Density Estimates Using FFT');
+% % xlabel("Frequency (Hz)");
+% % ylabel("Power/Frequency (dB/Hz)");
+% % title("Periodogram Using FFT");
+% % lgd = legend;
