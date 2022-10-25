@@ -1,9 +1,11 @@
 % Script to run OpenFAST with lidar simulator TEST HUGO
 
 
-clearvars; close all; clc;
-
+%clearvars; close all; clc;
+addpath('dbgFiles')
+Data = ReadROSCOtextIntoStruct('1p2_RandSeed1-2406_maininput.RO.dbg')
 %% Load results from exe
+addpath('dbgFiles')
 resultData      = importdata('1p2_maininput.RO.dbg2');
 % signalNames     = strsplit(resultData.textdata{end-1,1});
 % signalNames     = signalNames(~cellfun(@isempty,signalNames));
