@@ -7,3 +7,6 @@ slprj
 *.bak
 *.inp.bak
 *.bak
+*.pdf
+*.wnd
+*.sum
