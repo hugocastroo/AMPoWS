@@ -9,10 +9,10 @@
 clearvars;clc;%close all;
 
 %% Set the basic info for the simulation
-nSeed = 1;                                                                  %Different seeds for different wind fields
+nSeed = 6;                                                                  %Different seeds for different wind fields
 Seed_vec = 1:nSeed;
 URefMinimum = 4;
-URefMaximum = 4;
+URefMaximum = 24;
 URefStep = 2;
 %%
 %Loop for every different wind speed
@@ -111,6 +111,41 @@ for URef = URefMinimum:URefStep:URefMaximum
     plot(f,S_RR,'r','Linewidth',2)                                          %Plot the analytic spectrum
     plot(f_est,S_est_mean,'b','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
 
+%%
+
+    %RoscoPart
+    DataRosco = cell(1,nSeed);                                               % allocation
+    for iSeed = 1:nSeed
+        Seed                = iSeed;
+        RoscoResultFile  	= ['e:\Tesis\Simulationen\Teil1\sim\Simulationen\1p2_RandSeed1-',num2str(URef,resolution),num2str(Seed,'%02d'),'_maininput.RO.dbg'];
+        DataRosco{iSeed}    = ReadROSCOtextIntoStruct(RoscoResultFile);
+    end
+
+    ModifiedRoscoWE_Vw = zeros(nSeed,floor((length(DataRosco{iSeed}.WE_Vw)-1)/11.666));       % allocation
+    for iSeed = 1:nSeed
+        for i = 1:(length(ModifiedRoscoWE_Vw))
+            ModifiedRoscoWE_Vw(iSeed,i) = DataRosco{iSeed}.WE_Vw(floor(i*11.66)-10);
+        end
+    end
+        
+    %Create an array with the different spectrum estimations with pwelch using every different wind feld according to the different seeds
+    S_estRosco = zeros(nSeed,((n_FFT/2)+1));                                     % allocation                                            
+    for iSeed = 1:nSeed
+        v_0 = ModifiedRoscoWE_Vw(iSeed,:);
+        % estimate spectrum
+        [S_estRosco(iSeed,:),f_estRosco]   	= pwelch(v_0-mean(v_0),MyWindow,[],n_FFT,SamplingFrequency);
+    end
+
+    %Calculate the mean REWS using the array with the different spectrum data from every seed
+    S_est_mean          = mean(S_estRosco);
+    
+    %Plot just one signal
+%     for iSeed = 1:nSeed
+%         plot(f_estRosco,S_estRosco(iSeed,:),'Linewidth',0.5)                                %Plot the estimation made with the mean values and pwelch
+%     end
+    
+    %Plot the mean
+    plot(f_estRosco,S_est_mean,'g','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
 end
 
 %Save plot as pdf for further use if desired
@@ -125,39 +160,19 @@ if SavePlot
 end
 
 %% Rosco REWS-Kalman Filter Estimation with the Turbsim REWS
-%Plot original
-RoscoResultFile  	= ['e:\Tesis\Simulationen\Teil1\sim\1p2_RandSeed1-401_maininput.RO.dbg'];
-DataRosco    = ReadROSCOtextIntoStruct(RoscoResultFile);
-figure
-hold on; grid on; box on
-plot(DataRosco.Time,  DataRosco.WE_Vw,'b','Linewidth',2,'DisplayName','Estimated wind speed');
-plot(t,v_0,'g','Linewidth',2,'DisplayName','Rotor disc')
-xlabel("Time in s");
-ylabel("Velocity in m/s");
-xlim([0 1200]);
-lgd = legend;
-%Plot with the signals shifted and the 700 seconds adjustment
-figure
-hold on; grid on; box on
-plot(DataRosco.Time(1:length(DataRosco.Time)-10334)-600,  DataRosco.WE_Vw(1:length(DataRosco.Time)-10334),'b','Linewidth',2,'DisplayName','Estimated wind speed');
-plot(DataRosco.Time(5666:end),  DataRosco.WE_Vw(5666:end),'b','Linewidth',2,'DisplayName','Estimated wind speed');
-plot(t+4.5,v_0,'g','Linewidth',2,'DisplayName','Rotor disc')
-xlabel("Time in s");
-ylabel("Velocity in m/s");
-xlim([0 1200]);
-lgd = legend;
 
-%Compare wind field from 0-600 with 600-1200
 %Plot with the signals shifted and the 700 seconds adjustment
-figure
-hold on; grid on; box on
-plot(DataRosco.Time,DataRosco.WE_Vw,'b','Linewidth',2,'DisplayName','Estimated wind speed');
-plot(DataRosco.Time-600,  DataRosco.WE_Vw,'g','Linewidth',2,'DisplayName','Estimated wind speed');
-xlabel("Time in s");
-ylabel("Velocity in m/s");
-xlim([0 1200]);
-lgd = legend;
+% figure
+% hold on; grid on; box on
+% plot(DataRosco.Time(1:length(DataRosco.Time)-10334)-600,  DataRosco.WE_Vw(1:length(DataRosco.Time)-10334),'b','Linewidth',2,'DisplayName','Estimated wind speed');
+% plot(DataRosco.Time(5666:end),  DataRosco.WE_Vw(5666:end),'b','Linewidth',2,'DisplayName','Estimated wind speed');
+% plot(t+4.5,v_0,'g','Linewidth',2,'DisplayName','Rotor disc')
+% xlabel("Time in s");
+% ylabel("Velocity in m/s");
+% xlim([0 1200]);
+% lgd = legend;
 
+%Loop for the different speeds
 % for URef = URefMinimum:URefStep:URefMaximum
 %     if(URef < 10)                                                           %%Take just one digit for speeds below 10m/s
 %         resolution = '%01d';
@@ -213,4 +228,5 @@ lgd = legend;
 % 
 %     plot(f_estRosco,S_est_mean,'g','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
 % end                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                              
+
