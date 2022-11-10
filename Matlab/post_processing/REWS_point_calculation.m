@@ -5,8 +5,7 @@
 %wind field (33x33), the point in front o the hub. The calculation
 %ilustrates the wind speed at Hub height since the point is in front of the
 %hub. The REWS and the spectra are calculated and compared with the
-%analytic values. After the calculation of a single point, the REWS of the
-%whole grid is calculated.
+%analytic values. 
 %------------------------------------------------------------
 %V1.0 2022.11.07 - Based on Script from David Schlip's lecture
 % ----------------------------------
@@ -32,7 +31,6 @@ for URef = 4:2:24
     end
 
     %% After reading the files create the analytic spectrum of a single point and an estimated one for the wind at hub height using pwelch.
-    
     % frequency data
     T       = size(velocity{1},1)*dt;
     f_max   = 1/2*1/dt;
@@ -51,7 +49,7 @@ for URef = 4:2:24
     t       = 0:dt:T-dt;
     n_t     = length(t); 
     
-    % Analytic spectrum calculation
+    % Analytic spectrum calculation for the wind speed URef
     S       = sigma^2 * 4*L/URef ./ (1 + 6 * f * L/URef ).^(5/3);
     
     % modified analytic spectrum to have the right std deviation
