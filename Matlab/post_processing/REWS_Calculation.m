@@ -7,7 +7,6 @@
 %V1.0 2022.11.09 - Based on Script from David Schlip's lecture
 % ----------------------------------
 clearvars;clc;%close all;
-
 %% Set the basic info for the simulation
 nSeed = 6;                                                                  %Different seeds for different wind fields
 Seed_vec = 1:nSeed;
@@ -30,7 +29,7 @@ for URef = URefMinimum:URefStep:URefMaximum
         [velocity{iSeed}, y, z, nz, ny, dz, dy, dt, zHub, z1, SummVars] = readBLgrid(TurbSimResultFile);
     end
 
-    %% After reading the files create the analytic spectrum of the wind speed make an estimation for the whole wind field using pwelch.
+    % After reading the files create the analytic spectrum of the wind speed make an estimation for the whole wind field using pwelch.
     % frequency data
     T       = size(velocity{1},1)*dt;
     f_max   = 1/2*1/dt;
@@ -87,6 +86,7 @@ for URef = URefMinimum:URefStep:URefMaximum
     
     %Create an array with the different spectrum estimations with pwelch using every different wind feld according to the different seeds
     S_est = zeros(nSeed,((n_FFT/2)+1));                                     % allocation                                            
+    WindFieldTurbSim = zeros(nSeed,n_FFT);
     for iSeed = 1:nSeed
         v_0             = NaN(n_t,1);
         for i_t = 1:1:n_t
@@ -94,6 +94,7 @@ for URef = URefMinimum:URefStep:URefMaximum
             WindField       = CurrentWind(IsInRotorDisc);
             v_0(i_t,1)      = mean(WindField);
         end
+        WindFieldTurbSim(iSeed,:) = v_0;
         % estimate spectrum
         [S_est(iSeed,:),f_est]   	= pwelch(v_0-mean(v_0),MyWindow,[],n_FFT,SamplingFrequency);
     end
@@ -108,11 +109,11 @@ for URef = URefMinimum:URefStep:URefMaximum
     set(gca,'yScale','log')
     xlabel('frequency [Hz]','FontSize', 20)
     ylabel('Spectrum [(m/s)^2/Hz]','FontSize', 20)
-    plot(f,S_RR,'r','Linewidth',2)                                          %Plot the analytic spectrum
-    plot(f_est,S_est_mean,'b','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
-
+    plot(f,S_RR,'r','Linewidth',2,'DisplayName','Analytic')              %Plot the analytic spectrum
+    plot(f_est,S_est_mean,'b','Linewidth',2,'DisplayName','Estimated mean Turbsim')    %Plot the estimation made with the mean values and pwelch
+    title([num2str(URef), 'm/s']);
+    lgd = legend;
 %%
-
     %RoscoPart
     DataRosco = cell(1,nSeed);                                               % allocation
     for iSeed = 1:nSeed
@@ -131,25 +132,55 @@ for URef = URefMinimum:URefStep:URefMaximum
     %Create an array with the different spectrum estimations with pwelch using every different wind feld according to the different seeds
     S_estRosco = zeros(nSeed,((n_FFT/2)+1));                                     % allocation                                            
     for iSeed = 1:nSeed
-        v_0 = ModifiedRoscoWE_Vw(iSeed,:);
+        vRosco = ModifiedRoscoWE_Vw(iSeed,:);
         % estimate spectrum
-        [S_estRosco(iSeed,:),f_estRosco]   	= pwelch(v_0-mean(v_0),MyWindow,[],n_FFT,SamplingFrequency);
+        [S_estRosco(iSeed,:),f_estRosco]   	= pwelch(vRosco-mean(vRosco),MyWindow,[],n_FFT,SamplingFrequency);
     end
 
     %Calculate the mean REWS using the array with the different spectrum data from every seed
-    S_est_mean          = mean(S_estRosco);
+    S_est_meanRosco          = mean(S_estRosco);
     
     %Plot just one signal
-%     for iSeed = 1:nSeed
-%         plot(f_estRosco,S_estRosco(iSeed,:),'Linewidth',0.5)                                %Plot the estimation made with the mean values and pwelch
-%     end
+%      for iSeed = 1:nSeed
+%          plot(f_estRosco,S_estRosco(iSeed,:),'Linewidth',0.1,'DisplayName',['ROSCO seed',num2str(iSeed)])                                %Plot the estimation made with the mean values and pwelch
+%      end
     
     %Plot the mean
-    plot(f_estRosco,S_est_mean,'g','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
+    plot(f_estRosco,S_est_meanRosco,'g','Linewidth',3,'DisplayName','Estimated mean Rosco')                                %Plot the estimation made with the mean values and pwelch
+
+    %% Cross Spectra calculation
+    vRoscoTotal = mean(ModifiedRoscoWE_Vw);
+    v_0Total = mean(WindFieldTurbSim);
+    MyWindowCross                    = ones(n_FFT,1);
+    [SCross(1,:),FCross] = cpsd(v_0Total-mean(v_0Total),vRoscoTotal-mean(vRoscoTotal),MyWindowCross,[],n_FFT,SamplingFrequency);
+    plot(FCross,abs(SCross),'k','Linewidth',2,'DisplayName','Cross Spectra')
+    
+    [gamma_Sq_est,fcoh_est]= mscohere(v_0Total-mean(v_0Total),vRoscoTotal-mean(vRoscoTotal),MyWindowCross,[],n_FFT,SamplingFrequency);
+
+    cohsqr = (abs(SCross)).^2./(S_est_mean.*S_est_meanRosco);
+    k=(2*pi*FCross)/URef;
+
+    % Coherence
+    Distance    = 1 ;% distance in y-z plane
+    kappa       = 12*((FCross/URef).^2+(0.12/L).^2).^0.5;
+    gamma_uu    = exp(-kappa.*Distance); % coherence between point 1 and 2 in u
+
+    figure
+    hold on;grid on;box on
+    plot(k,cohsqr,'DisplayName','GammaSqrSpectra');
+    plot(fcoh_est,gamma_Sq_est,'DisplayName','GammaSqrEstmscohere');
+    plot(k,gamma_uu.^2,'DisplayName','Analytic');
+    ylim([0 1])
+    set(gca,'xScale','log')
+    xlabel('wave number [rad/m]')
+    ylabel('coherence [-]')
+    title([num2str(URef), 'm/s']);
+    lgd = legend;
+
 end
 
 %Save plot as pdf for further use if desired
-SavePlot = false;                                       
+SavePlot = false;
 if SavePlot
     pdf = gcf;
     set(pdf,'PaperOrientation','landscape');
@@ -228,5 +259,4 @@ end
 % 
 %     plot(f_estRosco,S_est_mean,'g','Linewidth',2)                                %Plot the estimation made with the mean values and pwelch
 % end                                          
-                              
-
+   
