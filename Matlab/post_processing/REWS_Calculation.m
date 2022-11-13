@@ -91,18 +91,3 @@ for URef = URefMinimum:URefStep:URefMaximum
     lgd = legend;
 
 end
-
-%% 
-
-% /////////////////////////////////// calculating the estimate without
-% overlapping the signals
-% Array modification, since frequencies in Turbsim(20 Hz) and in OpenFAST(200) are different.
-%     ModifiedRoscoWE_Vw = zeros(nSeed,floor((length(DataRosco{nSeed}.WE_Vw)-1)/11.666));       % allocation
-%     for iSeed = 1:nSeed
-%         for i = 1:(length(ModifiedRoscoWE_Vw))
-%             ModifiedRoscoWE_Vw(iSeed,i) = DataRosco{iSeed}.WE_Vw(floor(i*10)-9);
-%         end
-%     end
-% 
-%         %Calculate the mean REWS using the array with the different spectrum data from every seed
-%     [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,ModifiedRoscoWE_Vw,nSeed);
