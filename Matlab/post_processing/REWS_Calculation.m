@@ -11,8 +11,8 @@
 clearvars;clc;%close all;
 %% Set the basic info for the simulation
 nSeed = 6;          %n Different seeds for each wind field speed
-URefMinimum = 4;
-URefMaximum = 4;
+URefMinimum = 6;
+URefMaximum = 6;
 URefStep = 2;
 %%
 %Loop for every different wind speed
@@ -36,9 +36,9 @@ for URef = URefMinimum:URefStep:URefMaximum
     % Array modification, since frequencies in Turbsim(20 Hz) and in OpenFAST(200 Hz) are different.
     % Overlapping the signal, since the last 100 seconds shouldbe overlapped, because the rosco signal is 700 seconds long
     for iSeed = 1:nSeed
-        signalaux(iSeed,:) = [DataRosco{iSeed}.WE_Vm(120001:end-1); DataRosco{iSeed}.WE_Vm(20001:120000)];
+        signalaux(iSeed,:) = [DataRosco{iSeed}.WE_Vw(120001:end-1); DataRosco{iSeed}.WE_Vw(20001:120000)];
     end
-      
+    
     ModifiedRoscoOverlapped = zeros(nSeed,EstimationParam.n_FFT);       % allocation
     for iSeed = 1:nSeed
         for i = 1:(length(ModifiedRoscoOverlapped))
@@ -46,7 +46,20 @@ for URef = URefMinimum:URefStep:URefMaximum
         end
     end
 
-    %Calculate the mean REWS using an overlapped signal - BETTER RESULTS
+    %Signal more similar to the turb sim wind field for a more similar spectrum test
+    TestWindField = sqrt((ModifiedRoscoOverlapped.^2+WindFieldTurbSim.^2)/2);
+
+    %Compare the windfields if needed
+    figure
+    hold on;grid on;box on
+    plot(1:length(ModifiedRoscoOverlapped),mean(ModifiedRoscoOverlapped),'DisplayName','Rosco overlapped wind field')
+    plot(1:length(WindFieldTurbSim),mean(WindFieldTurbSim),'DisplayName','TurbSim wind field')
+    %plot(1:length(WindFieldTurbSim),(mean(TestWindField)),,'DisplayName','Test Modified signal')
+    xlabel('time[s]','FontSize', 20)
+    ylabel('wind speed [m/s]','FontSize', 20)
+    lgd = legend;
+ 
+    %Calculate the mean REWS using an overlapped signal
     [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,ModifiedRoscoOverlapped,nSeed);
     
     %%Cross Spectra Parameters
@@ -82,9 +95,10 @@ for URef = URefMinimum:URefStep:URefMaximum
     plot(fcoh_est,gamma_Sq_est,'DisplayName','GammaSqrEstmscohere');
     plot(k,gamma_uu.^2,'DisplayName','Analytic');
     ylim([0 1])
+    xlim([10^-3.1 10^1])
     set(gca,'xScale','log')
-    xlabel('wave number [rad/m]')
-    ylabel('coherence [-]')
+    xlabel('wave number [rad/m]','FontSize', 20)
+    ylabel('coherence [-]','FontSize', 20)
     title([num2str(URef), 'm/s']);
     lgd = legend;
 
