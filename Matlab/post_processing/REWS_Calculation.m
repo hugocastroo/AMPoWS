@@ -11,8 +11,8 @@
 clearvars;clc;%close all;
 %% Set the basic info for the simulation
 nSeed = 6;          %n Different seeds for each wind field speed
-URefMinimum = 6;
-URefMaximum = 6;
+URefMinimum = 24;
+URefMaximum = 16;
 URefStep = 2;
 %%
 %Loop for every different wind speed
@@ -50,17 +50,17 @@ for URef = URefMinimum:URefStep:URefMaximum
     TestWindField = sqrt((ModifiedRoscoOverlapped.^2+WindFieldTurbSim.^2)/2);
 
     %Compare the windfields if needed
-    figure
-    hold on;grid on;box on
-    plot(1:length(ModifiedRoscoOverlapped),mean(ModifiedRoscoOverlapped),'DisplayName','Rosco overlapped wind field')
-    plot(1:length(WindFieldTurbSim),mean(WindFieldTurbSim),'DisplayName','TurbSim wind field')
-    %plot(1:length(WindFieldTurbSim),(mean(TestWindField)),,'DisplayName','Test Modified signal')
-    xlabel('time[s]','FontSize', 20)
-    ylabel('wind speed [m/s]','FontSize', 20)
-    lgd = legend;
+%     figure
+%     hold on;grid on;box on
+%     plot(1:length(ModifiedRoscoOverlapped),mean(ModifiedRoscoOverlapped),'DisplayName','Rosco overlapped wind field')
+%     plot(1:length(WindFieldTurbSim),mean(WindFieldTurbSim),'DisplayName','TurbSim wind field')
+%     %plot(1:length(WindFieldTurbSim),(mean(TestWindField)),,'DisplayName','Test Modified signal')
+%     xlabel('time[s]','FontSize', 20)
+%     ylabel('wind speed [m/s]','FontSize', 20)
+%     lgd = legend;
  
     %Calculate the mean REWS using an overlapped signal
-    [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,ModifiedRoscoOverlapped,nSeed);
+    [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,TestWindField,nSeed);
     
     %%Cross Spectra Parameters
     vRoscoTotal = mean(ModifiedRoscoOverlapped);
