@@ -18,7 +18,11 @@ function DataFAST = ReadFASToutbFiles(URef,nSeed)
     DataFAST = cell(1,nSeed);                                               % allocation
     for iSeed = 1:nSeed
         Seed                = iSeed;
-        RoscoResultFile  	= ['e:\Tesis\Simulationen\Teil1\sim\Simulationen\1p2_RandSeed1-',num2str(URef,resolution),num2str(Seed,'%02d'),'_maininput.outb'];
+        if(URef <= 16)                                                           %%Take just one digit for speeds below 10m/s
+            RoscoResultFile  	= ['e:\Tesis\Simulationen\Teil1\sim\1p2_',num2str(URef,resolution),'_RandSeed1-',num2str(URef,resolution),num2str(Seed,'%02d'),'_maininput.outb'];
+        else
+            RoscoResultFile  	= ['e:\Tesis\Simulationen\Teil1\sim\1p_',num2str(URef,resolution),'_RandSeed1-',num2str(URef,resolution),num2str(Seed,'%02d'),'_maininput.outb'];
+        end
         DataFAST{Seed}    = ReadFASTbinaryIntoStruct(RoscoResultFile);
     end
 

@@ -6,100 +6,105 @@
 %compared with the Estimated REWS-Spectra from the ROSCO controller using a
 %Kalman filter, sampling frequency 200Hz.
 %------------------------------------------------------------
+%V1.1 2022.11.17 - Cross Spectra correction
 %V1.0 2022.11.09 - Based on Script from David Schlip's lecture
 % ----------------------------------
 clearvars;clc;%close all;
 %% Set the basic info for the simulation
 nSeed = 6;          %n Different seeds for each wind field speed
-URefMinimum = 24;
-URefMaximum = 16;
+URefMinimum = 4;
+URefMaximum = 24;
 URefStep = 2;
 %%
 %Loop for every different wind speed
 for URef = URefMinimum:URefStep:URefMaximum
 
-    %Read the wnd files from Turbsim
-    [velocity, TurbsimParam] = ReadWndFiles(URef,nSeed);
+    % Read the wnd files from Turbsim
+    [TurbSimWind, TurbsimParam] = ReadWndFiles(URef,nSeed);
     
     % Analytic Spectrum - frequency data calculation using the wind field length and turbsim parameters
-    AnSpecParam = SetAnSpecData(velocity, TurbsimParam, URef);
+    AnSpecParam = SetAnSpecData(TurbSimWind, TurbsimParam, URef);
         
     % Spectra rotor-effective wind speed - rotor model
     S_RR = SpectraREWSCalculation(AnSpecParam, TurbsimParam, URef);
     
-    % Mean pwelch calculation over n seeds
-    [S_est_mean,f_est,WindFieldTurbSim,EstimationParam] = MeanPwelchEst(velocity, AnSpecParam, TurbsimParam, nSeed);
+    % Mean pwelch calculation over n seeds for the TurbSim Wind fields
+    [S_mean_REWS,f_mean,REWS,EstimationParam] = MeanPwelchEst(TurbSimWind, AnSpecParam, TurbsimParam, nSeed);
 
     %Read the n ROSCO dbg file for URef wind speed and store it in a cell array
     DataRosco = ReadRoscoDbgFiles(URef,nSeed);
 
     % Array modification, since frequencies in Turbsim(20 Hz) and in OpenFAST(200 Hz) are different.
     % Overlapping the signal, since the last 100 seconds shouldbe overlapped, because the rosco signal is 700 seconds long
-    for iSeed = 1:nSeed
-        signalaux(iSeed,:) = [DataRosco{iSeed}.WE_Vw(120001:end-1); DataRosco{iSeed}.WE_Vw(20001:120000)];
-    end
-    
-    ModifiedRoscoOverlapped = zeros(nSeed,EstimationParam.n_FFT);       % allocation
-    for iSeed = 1:nSeed
-        for i = 1:(length(ModifiedRoscoOverlapped))
-            ModifiedRoscoOverlapped(iSeed,i) = signalaux(iSeed,i*10-9);
-        end
-    end
-
-    %Signal more similar to the turb sim wind field for a more similar spectrum test
-    TestWindField = sqrt((ModifiedRoscoOverlapped.^2+WindFieldTurbSim.^2)/2);
+    TEREWS = MatchFrequency(DataRosco,EstimationParam, nSeed);
 
     %Compare the windfields if needed
+%         %Signal more similar to the turb sim wind field for a more similar spectrum test
+%     TestWindField = sqrt((TEREWS.^2+REWS.^2)/2);
 %     figure
 %     hold on;grid on;box on
-%     plot(1:length(ModifiedRoscoOverlapped),mean(ModifiedRoscoOverlapped),'DisplayName','Rosco overlapped wind field')
-%     plot(1:length(WindFieldTurbSim),mean(WindFieldTurbSim),'DisplayName','TurbSim wind field')
-%     %plot(1:length(WindFieldTurbSim),(mean(TestWindField)),,'DisplayName','Test Modified signal')
+%     plot(1:length(TEREWS),mean(TEREWS),'DisplayName','Rosco overlapped wind field')
+%     plot(1:length(REWS),mean(REWS),'DisplayName','TurbSim wind field')
+%     plot(1:length(REWS),(mean(TestWindField)),'DisplayName','Test Modified signal');
 %     xlabel('time[s]','FontSize', 20)
 %     ylabel('wind speed [m/s]','FontSize', 20)
 %     lgd = legend;
  
     %Calculate the mean REWS using an overlapped signal
-    [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,TestWindField,nSeed);
-    
-    %%Cross Spectra Parameters
-    vRoscoTotal = mean(ModifiedRoscoOverlapped);
-    v_0Total = mean(WindFieldTurbSim);
+    [S_mean_TEREWS,f_est_TEREWS] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,TEREWS,nSeed);
 
-    %Cross Spectra calculation
-    [SCross(1,:),FCross] = cpsd(v_0Total-mean(v_0Total),vRoscoTotal-mean(vRoscoTotal),EstimationParam.MyWindow,[],EstimationParam.n_FFT,EstimationParam.SamplingFrequency);
-    
+    %Cross Spectra calculation for n wind fields
+    [Scross_mean, f_Cross] = MeanCrossEst(EstimationParam, REWS, TEREWS, nSeed);
+
     %Plot data
-    SignalNames = {'Analytic','Estimated mean Turbsim','Estimated mean Rosco','Cross Spectra'};
+    SignalNames = {'Analytic','Estimated mean REWS','Estimated mean TEREWS','Mean Cross'};
     SavePlot = false; %If true, the plot is saved as pdf in full horizontal page size
-    FrequenciesToPlot = {AnSpecParam.f,f_est,f_estRosco,FCross};
-    SignalsToPlot = {S_RR,S_est_mean,S_est_meanRosco,abs(SCross)};
+    FrequenciesToPlot = {AnSpecParam.f,f_mean,f_est_TEREWS,f_Cross};
+    SignalsToPlot = {S_RR,S_mean_REWS,S_mean_TEREWS,abs(Scross_mean)};
     PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot,URef);
 
-    %%
-    %%Coherence calculation to compare the mscohere funcion with the 
-    [gamma_Sq_est,fcoh_est]= mscohere(v_0Total-mean(v_0Total),vRoscoTotal-mean(vRoscoTotal),EstimationParam.MyWindow,[],EstimationParam.n_FFT,EstimationParam.SamplingFrequency);
+    %% Magnitude squared coherence (gamma square)
+    cohsqr = (abs(Scross_mean)).^2./(S_mean_REWS.*S_mean_TEREWS);
 
-    % Magnitude squared coherence (gamma square)
-    cohsqr = (abs(SCross)).^2./(S_est_mean.*S_est_meanRosco);
-    k=(2*pi*FCross)/URef;
+    %cohsqrCorrection = cohsqr - ((1/100)*(1-cohsqr).^2);
+    
+    k=(2*pi*f_Cross)/URef;
+
+    grl = abs((Scross_mean)./(S_mean_REWS));
 
     % Coherence
-    Distance    = 1 ;
-    kappa       = 12*((FCross/URef).^2+(0.12/AnSpecParam.L).^2).^0.5;
+    Distance    = 1;
+    kappa       = 12*((f_Cross/URef).^2+(0.12/AnSpecParam.L).^2).^0.5;
     gamma_uu    = exp(-kappa.*Distance); % coherence between point 1 and 2 in u
 
+    %Plot Coherence
     figure
     hold on;grid on;box on
     plot(k,cohsqr,'DisplayName','GammaSqrSpectra');
-    plot(fcoh_est,gamma_Sq_est,'DisplayName','GammaSqrEstmscohere');
-    plot(k,gamma_uu.^2,'DisplayName','Analytic');
+    plot(k,gamma_uu.^2,'DisplayName','Analytic Kaimal');
     ylim([0 1])
     xlim([10^-3.1 10^1])
     set(gca,'xScale','log')
-    xlabel('wave number [rad/m]','FontSize', 20)
+    xlabel('k [rad/m]','FontSize', 20)
     ylabel('coherence [-]','FontSize', 20)
     title([num2str(URef), 'm/s']);
     lgd = legend;
+
+    W_cutoff = 0.033333411319;
+    W_delay = 2*pi*0.1;
+    W_n = W_delay/W_cutoff;
+    T_filter = (arctan(W_n))/(W_delay);
+
+    %Plot transfer function
+%     figure
+%     hold on;grid on;box on
+%     plot(k,grl,'DisplayName','Grl');
+%     ylim([0 1])
+%     xlim([10^-3.1 10^1])
+%     set(gca,'xScale','log')
+%     xlabel('k [rad/m]','FontSize', 20)
+%     ylabel('GRL [-]','FontSize', 20)
+%     title([num2str(URef), 'm/s']);
+%     lgd = legend;
 
 end
