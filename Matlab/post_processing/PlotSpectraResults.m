@@ -5,16 +5,22 @@
 %------------------------------------------------------------
 %V1.0 2022.11.12 - HC
 % ----------------------------------    
-function PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot,URef)
+function PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot,URef,xText,yText,tText,logViewx,logViewy)
 
     %plot the results
     figure
     hold on;grid on;box on
-    set(gca,'xScale','log')
-    set(gca,'yScale','log')
-    xlabel('frequency [Hz]','FontSize', 20)
-    ylabel('Spectrum [(m/s)^2/Hz]','FontSize', 20)
-    title([num2str(URef), 'm/s']);
+    xlabel(xText,'FontSize', 20)
+    ylabel(yText,'FontSize', 20)
+    title(tText);
+
+    if logViewx
+        set(gca,'xScale','log')
+    end
+
+    if logViewy
+        set(gca,'yScale','log')
+    end
 
     for i = 1:length(FrequenciesToPlot)
         plot(FrequenciesToPlot{i},SignalsToPlot{i},'Linewidth',2)

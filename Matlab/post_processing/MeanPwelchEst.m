@@ -7,9 +7,9 @@
 %------------------------------------------------------------
 %V1.0 2022.11.12 - HC
 % ----------------------------------    
-function [S_est_mean,f_est,WindFieldTurbSim,EstimationParam] = MeanPwelchEst(velocity,AnSpecParam, TurbsimParam, nSeed)
+function [S_est_mean,f_est,REWS,EstimationParam] = MeanPwelchEst(TurbSimWind,AnSpecParam, TurbsimParam, nSeed)
 
-    %Rotos disc parameters
+    %Rotos disc parameters NREL 5MW Turbine
     R                   = 63;
     [Y,Z]               = meshgrid(TurbsimParam.y,TurbsimParam.z-AnSpecParam.h);
     DistanceToHub       = (Y(:).^2+Z(:).^2).^0.5;
@@ -23,15 +23,16 @@ function [S_est_mean,f_est,WindFieldTurbSim,EstimationParam] = MeanPwelchEst(vel
     
     %Create an array with the different spectrum estimations with pwelch using every different wind feld according to the different seeds
     S_est = zeros(nSeed,((EstimationParam.n_FFT/2)+1));                                     % allocation                                            
-    WindFieldTurbSim = zeros(nSeed,EstimationParam.n_FFT);
+    REWS = zeros(nSeed,EstimationParam.n_FFT);
     for iSeed = 1:nSeed
         v_0             = NaN(AnSpecParam.n_t,1);
         for i_t = 1:1:AnSpecParam.n_t
-            CurrentWind     = squeeze(velocity{iSeed}(i_t,1,:,:));          % extract signal from wind field array and squeze it
+            CurrentWind     = squeeze(TurbSimWind{iSeed}(i_t,1,:,:));          % extract signal from wind field array and squeze it
             WindField       = CurrentWind(IsInRotorDisc);
             v_0(i_t,1)      = mean(WindField);
         end
-        WindFieldTurbSim(iSeed,:) = v_0;
+        %Shift the REWS signal to match the TEREWS signal and avoid any jump in te signal
+        REWS(iSeed,:) = circshift(v_0,-length(REWS)/6);
         % estimate spectrum
         [S_est(iSeed,:),f_est]   	= pwelch(v_0-mean(v_0),EstimationParam.MyWindow,[],EstimationParam.n_FFT,EstimationParam.SamplingFrequency);
     end

@@ -6,14 +6,13 @@
 %V1.0 2022.11.12 - HC
 % ----------------------------------    
 function S_RR = SpectraREWSCalculation(AnSpecParam, TurbsimParam, URef)
-%%Calculation for the whole grid
 
     % Analytic spectrum calculation for the wind speed URef
     S       = AnSpecParam.sigma^2 * 4*AnSpecParam.L/URef ./ (1 + 6 * AnSpecParam.f * AnSpecParam.L/URef ).^(5/3);
     
     %Grid Parameters
     kappa               = 12*((AnSpecParam.f/URef).^2+(0.12/AnSpecParam.L).^2).^0.5;
-    R                   = 63;
+    R                   = 63; %Rotor diameter for the 5MW NREL Turbine
     [Y,Z]               = meshgrid(TurbsimParam.y,TurbsimParam.z-AnSpecParam.h);
     DistanceToHub       = (Y(:).^2+Z(:).^2).^0.5;
     nPoint              = length(DistanceToHub);

@@ -13,7 +13,9 @@ function [Scross_mean, FCross] = MeanCrossEst(EstimationParam, REWS, TEREWS, nSe
     SCross_est = zeros(nSeed,((EstimationParam.n_FFT/2)+1));
     for iSeed = 1:nSeed
         % estimate cross spectrum with cpsd for n wind fields
-        [SCross_est(iSeed,:),FCross] = cpsd(REWS(iSeed,:)-mean(REWS(iSeed,:)),TEREWS(iSeed,:)-mean(TEREWS(iSeed,:)),EstimationParam.MyWindow,[],EstimationParam.n_FFT,EstimationParam.SamplingFrequency);
+        signal1 = REWS(iSeed,:)-mean(REWS(iSeed,:));
+        signal2 = TEREWS(iSeed,:)-mean(TEREWS(iSeed,:));
+        [SCross_est(iSeed,:),FCross] = cpsd(signal1,signal2,EstimationParam.MyWindow,[],EstimationParam.n_FFT,EstimationParam.SamplingFrequency);
     end
     
     %Get the mean spectrum from n seeds

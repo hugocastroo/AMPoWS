@@ -5,7 +5,7 @@
 %------------------------------------------------------------
 %V1.0 2022.11.12 - HC
 % ----------------------------------    
-function [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,ModifiedRoscoWE_Vw,nSeed)
+function [S_mean_TEREWS,f_est_TEREWS] = MeanPwelchEstRosco(AnSpecParam,TurbsimParam,TEREWS,nSeed)
 
     % estimation parameters
     nBlocks                     = 1;
@@ -17,13 +17,13 @@ function [S_est_meanRosco,f_estRosco] = MeanPwelchEstRosco(AnSpecParam,TurbsimPa
     %Create an array with the different spectrum estimations with pwelch using every different wind feld according to the different seeds
     S_estRosco = zeros(nSeed,((n_FFT/2)+1));                                     % allocation                                            
     for iSeed = 1:nSeed
-        vRosco = ModifiedRoscoWE_Vw(iSeed,:);
+        vRosco = TEREWS(iSeed,:);
         % estimate spectrum
-        [S_estRosco(iSeed,:),f_estRosco]   	= pwelch(vRosco-mean(vRosco),MyWindow,[],n_FFT,SamplingFrequency);
+        [S_estRosco(iSeed,:),f_est_TEREWS]   	= pwelch(vRosco-mean(vRosco),MyWindow,[],n_FFT,SamplingFrequency);
     end
 
     %Calculate the mean REWS using the array with the different spectrum data from every seed
-    S_est_meanRosco          = mean(S_estRosco);
+    S_mean_TEREWS          = mean(S_estRosco);
 
     %Plot just one signal
 %      for iSeed = 1:nSeed

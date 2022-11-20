@@ -7,23 +7,15 @@
 % ----------------------------------    
 function [TEREWS] = MatchFrequency(DataRosco,EstimationParam, nSeed)
 
-    signalaux = zeros(nSeed,120002);
-    signalaux1 = zeros(nSeed,120000);
-    for iSeed = 1:nSeed
-        %signalaux(iSeed,:) = [DataRosco{iSeed}.WE_Vw(120001:end-1); DataRosco{iSeed}.WE_Vw(20001:120000)];
-        signalaux(iSeed,:) = circshift(DataRosco{iSeed}.WE_Vw(20000:end),20000);
-        signalaux1(iSeed,:) = signalaux(iSeed,1:end-2);
-%         Y = circshift(DataRosco{iSeed}.WE_Vw(20000:end-1),20000);
-%         figure
-%         hold on; grid on;
-%         plot(1:length(Y),Y);
-%         plot(1:length(DataRosco{iSeed}.WE_Vw),DataRosco{iSeed}.WE_Vw)
-    end
-    
+    Roscof = 1/DataRosco{1}.Time(2)-DataRosco{1}.Time(1);   %Rosco sampling frequency
+    FASTf = round(EstimationParam.SamplingFrequency);       %FAST sampling frequency
+    Begin = (floor(length(DataRosco{1}.WE_Vw)/(floor(length(DataRosco{1}.WE_Vw)/Roscof)/100)))+2; %Get the array begin for the new signal, according to the length of the original signal and the sampling frequency
     TEREWS = zeros(nSeed,EstimationParam.n_FFT);       % allocation
-    for iSeed = 1:nSeed
-        for i = 1:(length(TEREWS))
-            TEREWS(iSeed,i) = signalaux1(iSeed,i*10-9);
-        end
+
+    for i = 1:nSeed
+        % Array modification, since frequencies in Turbsim(20 Hz) and in OpenFAST(200 Hz) are different.
+        TEREWS(i,:) = DataRosco{i}.WE_Vw(Begin:Roscof/FASTf:end);
     end
+
 return
+

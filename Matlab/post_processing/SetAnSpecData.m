@@ -7,11 +7,11 @@
 %V1.0 2022.11.12 - HC
 % ----------------------------------
 
-function AnSpecParam = SetAnSpecData(velocity, TurbSimParam, URef)
+function AnSpecParam = SetAnSpecData(TurbSimWind, TurbSimParam, URef)
 
     % After reading the files create the analytic spectrum of the wind speed make an estimation for the whole wind field using pwelch.
     % frequency data
-    AnSpecParam.T       = size(velocity{1},1)*TurbSimParam.dt;
+    AnSpecParam.T       = size(TurbSimWind{1},1)*TurbSimParam.dt;
     AnSpecParam.f_max   = 1/2*1/TurbSimParam.dt;
     AnSpecParam.f_min   = 1/AnSpecParam.T;
     AnSpecParam.df      = AnSpecParam.f_min;
