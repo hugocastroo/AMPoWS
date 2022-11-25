@@ -27,7 +27,7 @@ function PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot
     end
     
     LegendCell = SignalNames;
-    legend(LegendCell)
+    %legend(LegendCell)
 
     %Save plot as pdf for further use if desired
     if SavePlot
@@ -35,6 +35,6 @@ function PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot
         set(pdf,'PaperOrientation','landscape');
         set(pdf,'PaperUnits','normalized');
         set(pdf,'PaperPosition', [0 0 1 1]);
-        pdfpath = ['Windspeed_', num2str(URef), 'ms'];
+        pdfpath = ['Windspeed_', num2str(URef), 'ms ',SignalNames{1}];
         saveas(gcf,pdfpath,'pdf');
     end

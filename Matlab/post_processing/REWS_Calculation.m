@@ -13,11 +13,11 @@
 clearvars;clc;%close all;
 
 % Set the basic info for the simulation
-nSeed = 6;          %n Different seeds for each wind field speed
-URefMinimum = 4;
+nSeed = 99;          %n Different seeds for each wind field speed
+URefMinimum = 14;
 URefMaximum = 24;
 URefStep = 2;
-
+tic
 %% Loop for every different wind speed
 for URef = URefMinimum:URefStep:URefMaximum
     fprintf(['Geschwindigkeit: ',num2str(URef)]);
@@ -46,22 +46,22 @@ for URef = URefMinimum:URefStep:URefMaximum
     [Scross_mean, f_Cross] = MeanCrossEst(EstimationParam, REWS, TEREWS, nSeed);
 
     %Plot Spectra data
-    FrequenciesToPlot = {AnSpecParam.f,f_mean,f_est_TEREWS,f_Cross};
-    SignalsToPlot = {S_RR,S_mean_REWS,S_mean_TEREWS,abs(Scross_mean)};
+    FrequenciesToPlot = {AnSpecParam.f,f_mean,f_est_TEREWS};
+    SignalsToPlot = {S_RR,S_mean_REWS,S_mean_TEREWS};
     SignalNames = {'Analytic','Estimated mean REWS','Estimated mean TEREWS','Mean Cross'};
     xText = 'frequency [Hz]'; %description for the x axis
     yText = 'Spectrum [(m/s)^2/Hz]'; %description for the y axis
-    tText = [num2str(URef), 'm/s']; %description for the title
+    tText = ''; %description for the title
     logViewx = true; %If true the plot is x axis of the plot is set to log scale
     logViewy = true; %If true the plot is y axis of the plot is set to log scale
-    SavePlot = false; %If true, the plot is saved as pdf in full horizontal page size
+    SavePlot = true; %If true, the plot is saved as pdf in full horizontal page size
     PlotSpectraResults(FrequenciesToPlot,SignalsToPlot,SignalNames,SavePlot,URef,xText,yText,tText,logViewx,logViewy)
 
     % Magnitude squared coherence (gamma square)
     cohsqr = (abs(Scross_mean)).^2./(S_mean_REWS.*S_mean_TEREWS);
     
     %Plot coherence data
-    PlotSpectraResults({f_Cross},{cohsqr},{'GammaSqrSpectra'},false,URef,'frequency [Hz]','coherence [-]',[num2str(URef), 'm/s'],true,false)
+    PlotSpectraResults({f_Cross},{cohsqr},{'GammaSqrSpectra'},true,URef,'frequency [Hz]','coherence [-]','',true,false)
     
     TimeDelay(URef/URefStep-1,:) = DelayCalculation(EstimationParam,REWS,TEREWS,nSeed);
 
@@ -76,9 +76,9 @@ for URef = URefMinimum:URefStep:URefMaximum
 %         SignalNames = {'TEREWS','REWS'};
 %         PlotSpectraResults(TimeToPlot,SignalsToPlot,SignalNames,false,URef,'time[s]','wind speed [m/s]',[num2str(URef), 'm/s'],false,false)
 %     end
-
+clear DataRosco; clear TurbSimWind; clear TEREWS; clear REWS;
 end
-
+toc
 %Plot the time delay series if needed,
 % for iSeed = 1:length(TimeDelay)
 %     time{iSeed} = (1:nSeed);
